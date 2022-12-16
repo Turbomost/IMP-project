@@ -1,0 +1,31 @@
+<html>
+
+<head>
+	<title>IMP projekt - xvalen29</title>
+</head>
+
+<body bgcolor="white" text="black">
+
+	<table border="1" width="100%">
+		<tr valign="middle">
+			<td width="100%">
+				<h2>Button is <span style="color: red">RELEASED</span></h2>
+			</td>
+		</tr>
+	</table>
+
+	<span id="button"><a>Back to main page</a></span>
+
+	<script>
+		setInterval(function () {
+			location.reload();
+		}, 1000);
+
+		url = window.location.href.replace("state", "multi");
+		document.getElementById("button").innerHTML = "<a href=\"" + url + "\">Back to main page</a>";
+
+	</script>
+
+</body>
+
+</html>
