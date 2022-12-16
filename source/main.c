@@ -14,7 +14,6 @@
 
 // Prototypes
 static const char *cgi_handler_basic(int ind, int count, char *param[], char *val[]);
-// void cgi_ex_init(void);
 
 // GPIO pin configuration
 #define BOARD_LED_GPIO BOARD_LED_ORANGE_GPIO
@@ -26,7 +25,13 @@ static const char *cgi_handler_basic(int ind, int count, char *param[], char *va
 #define BOARD_SW_IRQ_HANDLER BOARD_SW1_IRQ_HANDLER
 
 // Variable to store the button state
-int button = 0;
+int left = 0;
+int right = 0;
+
+// Interrupt service for SysTick timer
+void SysTick_Handler(void) {
+    time_isr();
+}
 
 // CGI structure
 static const tCGI cgis[] = {
@@ -35,15 +40,8 @@ static const tCGI cgis[] = {
     {"/state",
      cgi_handler_basic}};
 
-// Interrupt service for SysTick timer
-void SysTick_Handler(void) {
-    time_isr();
-}
-
 // CGI handler
 static const char *cgi_handler_basic(int ind, int count, char *param[], char *val[]) {
-    LWIP_ASSERT("check index", ind < LWIP_ARRAYSIZE(cgis));
-
     // /multi
     if (ind == 0) {
         // Set all leds off
@@ -62,9 +60,10 @@ static const char *cgi_handler_basic(int ind, int count, char *param[], char *va
 
     // /state
     else if (ind == 1) {
-        return button == 1 ? "/button_state_on.html" : "/button_state_off.html";
+        static char buf[32];
+        sprintf(buf, "/button_%d%d.html", left, right);
+        return buf;
     }
-
     return "/404.html";
 }
 
@@ -105,7 +104,10 @@ int main(void) {
     PORTB->PCR[4] = (PORT_PCR_MUX(0x01));  // D10
     PORTB->PCR[3] = (PORT_PCR_MUX(0x01));  // D11
     PORTB->PCR[2] = (PORT_PCR_MUX(0x01));  // D12
-    PORTE->PCR[12] = PORT_PCR_MUX(0x01);   // SW3
+
+    PORTE->PCR[27] = PORT_PCR_MUX(0x01);  // SW2
+    PORTE->PCR[12] = PORT_PCR_MUX(0x01);  // SW3
+    PORTE->PCR[10] = PORT_PCR_MUX(0x01);  // SW4
 
     // Change port pins as outputs
     PTB->PDDR = GPIO_PDDR_PDD(0x3C);
@@ -143,17 +145,11 @@ int main(void) {
     blink_and_wait();
 
     while (1) {
+        left = !(PTE->PDIR & (1 << 27));
+        right = !(PTE->PDIR & (1 << 10));
+
         ethernetif_input(&netif0);
-
-        // check if button 3 is pressed
-        if (!(PTE->PDIR & (1 << 12))) {
-            button = 1;
-        } else {
-            button = 0;
-        }
-
         sys_check_timeouts();
     }
-
     return 0;
 }
