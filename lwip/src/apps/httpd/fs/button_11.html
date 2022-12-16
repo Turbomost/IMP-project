@@ -7,28 +7,26 @@
 <body bgcolor="white" text="black">
 
 	<table border="1" width="100%">
+		<tr>
+			<th>Left button</th>
+			<th>Right button</th>
+		</tr>
 		<tr valign="middle">
-			<td width="50%">
-				<h2>Left button is <span style="color: limegreen">PRESSED</span></h2>
+			<td width="50%" align="center">
+				<h2><span style="color: limegreen">PRESSED</span></h2>
 			</td>
-			<td width="50%">
-				<h2>Right button is <span style="color: limegreen">PRESSED</span></h2>
+			<td width="50%" align="center">
+				<h2><span style="color: limegreen">PRESSED</span></h2>
 			</td>
 		</tr>
 	</table>
 
-	<span id="button"><a>Back to main page</a></span>
-
 	<script>
+		document.write("<a href=\"" + window.location.href.replace("state", "multi") + "\">Back to main page</a>");
 		setInterval(function () {
 			location.reload();
 		}, 500);
-
-		url = window.location.href.replace("state", "multi");
-		document.getElementById("button").innerHTML = "<a href=\"" + url + "\">Back to main page</a>";
-
 	</script>
-
 </body>
 
 </html>

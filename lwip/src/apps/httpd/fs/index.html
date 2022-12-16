@@ -14,57 +14,38 @@
 			<th>LED 5</th>
 		</tr>
 		<tr>
-			<td align="center" valign="middle">
-				<span id=led2><a>Loading</a></span>
-			</td>
-			<td align="center" valign="middle">
-				<span id=led3><a>Loading</a></span>
-			</td>
-			<td align="center" valign="middle">
-				<span id=led4><a>Loading</a></span>
-			</td>
-			<td align="center" valign="middle">
-				<span id=led5><a>Loading</a></span>
-			</td>
+
+			<script>
+				var url = window.location.href;
+				if (url.indexOf("multi?") == -1) {
+					if (url.indexOf("state") != -1) {
+						url = url.replace("state", "multi");
+
+					} else {
+						url = "multi?";
+					}
+				}
+
+				var leds = ["off", "off", "off", "off"];
+				var urls = [url, url, url, url];
+
+				for (var i = 0; i < leds.length; i++) {
+					if (url.indexOf("&index=" + (i + 2)) != -1) {
+						urls[i] = url.replace("&index=" + (i + 2), "");
+						leds[i] = "on";
+					} else {
+						urls[i] += "&index=" + (i + 2);
+					}
+					document.write("<td align='center' valign='middle'><a href='" + urls[i] + "'><img src='/img/" + leds[i] + ".png' width='100' height='90'></a></td>");
+				}
+
+
+			</script>
 		</tr>
 	</table>
-
-	<table width="100%">
-		<tr>
-			<td>
-				<span id=button><a>Loading</a></span>
-			</td>
-		</tr>
-	</table>
-
 	<script>
-		var url = window.location.href;
-		if (url.indexOf("multi?") == -1) {
-			if (url.indexOf("state") != -1) {
-				url = url.replace("state", "multi");
-
-			} else {
-				url = "multi?";
-			}
-		}
-
-		var leds = ["off", "off", "off", "off"];
-		var urls = [url, url, url, url];
-
-		for (var i = 0; i < leds.length; i++) {
-			if (url.indexOf("&index=" + (i + 2)) != -1) {
-				urls[i] = url.replace("&index=" + (i + 2), "");
-				leds[i] = "on";
-			} else {
-				urls[i] += "&index=" + (i + 2);
-			}
-			document.getElementById('led' + (i + 2)).innerHTML = "<a id='led" + (i + 2) + "' href='" + urls[i] + "'><img src='/img/" + leds[i] + ".png' width='100' height='90'></a>";
-		}
-
-		document.getElementById('button').innerHTML = "<a id='button' href='" + url.replace("multi", "state") + "'>Button state</a>";
-
+		document.write("<table width='100%'><tr><td><a href='" + url.replace("multi", "state") + "'>Button state</a></td></tr></table>");
 	</script>
-
 </body>
 
 </html>
